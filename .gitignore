@@ -1,0 +1,5 @@
+[bB]in
+wasm_bin
+*.o
+*.log
+
