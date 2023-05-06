@@ -6,6 +6,10 @@ string(REGEX MATCH "^CWE[0-9]+" CWE_NAME "${CWE_FOLDER}")
 
 project("juliet-c-${CWE_NAME}")
 
+message(STATUS "Setting compilation target to WASM")
+
+# add_definitions(-std=c++11 -O3)
+
 # prevent cmake from setting -O2 (for release, relwithdebinf, minsizerel, etc)
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "-g")
 set(CMAKE_C_FLAGS_RELEASE "-g")

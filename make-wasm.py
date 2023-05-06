@@ -30,7 +30,8 @@ def clean(path):
 
 def generate(path, output_dir):
     shutil.copy(root_dir + "/CMakeLists.txt", path)
-    retcode = subprocess.Popen(["cmake", "-DOUTPUT_DIR:STRING=" + output_dir, "."], cwd=path).wait()
+    # retcode = subprocess.Popen(["cmake", "-DOUTPUT_DIR:STRING=" + output_dir, "."], cwd=path).wait()
+    retcode = subprocess.Popen(["emcmake", "cmake", "-DOUTPUT_DIR:STRING=" + output_dir, "."], cwd=path).wait()
     if retcode != 0:
         juliet_print("error generating " + path + " - stopping")
         exit()
@@ -44,7 +45,7 @@ def make(path):
 
 
 def run(CWE, output_dir, timeout):
-    subprocess.Popen([root_dir + "/" + output_dir + "/juliet-run.sh", str(CWE), timeout]).wait()
+    subprocess.Popen([root_dir + "/" + output_dir + "/wasm-run.sh", str(CWE), timeout]).wait()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="build and run Juliet test cases for targeted CWEs")
@@ -68,8 +69,8 @@ if __name__ == "__main__":
         juliet_print("no CMakeLists.txt")
         exit()
 
-    if args.run and not os.path.exists(root_dir + "/juliet-run.sh"):
-        juliet_print("no juliet-run.sh")
+    if args.run and not os.path.exists(root_dir + "/wasm-run.sh"):
+        juliet_print("no wasm-run.sh")
         exit()
 
     for subdir in os.listdir(testcases):
