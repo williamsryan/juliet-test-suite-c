@@ -41,11 +41,11 @@ link_libraries(support pthread m)
 add_definitions(-DINCLUDEMAIN)
 
 # move the script to run tests into the top-level directory
-add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/juliet-run.sh"
-                   COMMAND "${CMAKE_COMMAND}" -E copy "${TOPLEVEL_DIR}/juliet-run.sh" "${CMAKE_BINARY_DIR}/juliet-run.sh"
-                   DEPENDS "${TOPLEVEL_DIR}/juliet-run.sh"
+add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/wasm-run.sh"
+                   COMMAND "${CMAKE_COMMAND}" -E copy "${TOPLEVEL_DIR}/wasm-run.sh" "${CMAKE_BINARY_DIR}/wasm-run.sh"
+                   DEPENDS "${TOPLEVEL_DIR}/wasm-run.sh"
 )
-add_custom_target(copy-run-script ALL DEPENDS "${CMAKE_BINARY_DIR}/juliet-run.sh")
+add_custom_target(copy-run-script ALL DEPENDS "${CMAKE_BINARY_DIR}/wasm-run.sh")
 
 # TODO identify and add CWE-specific support files, user guide section 5.2
 
