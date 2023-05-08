@@ -14,7 +14,7 @@ message(STATUS "Setting compilation target to WASM")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "-g")
 set(CMAKE_C_FLAGS_RELEASE "-g")
 set(CMAKE_C_FLAGS_MINSIZEREL "-g")
-add_compile_options(-O0)  # hopefully adding -O0 here should turn off test optimizations
+add_compile_options(-Os)  # hopefully adding -O0 here should turn off test optimizations
 
 
 option(PLACE_OUTPUT_IN_TOPLEVEL_DIR "Use TOPLEVEL_DIR/bin as the output for all test binaries" ON)

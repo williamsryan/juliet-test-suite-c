@@ -10,4 +10,4 @@ test :
 	$(info ************  TEST TODO ************)
 
 clean : 
-	rm -rf out/ test.wat test.wasm *.log instrumented/* samples/ harnesses/* original/* bin/ wasm_bin/CWE*/*.run
+	rm -rf out/ test.wat test.wasm *.log instrumented/* samples/ harnesses/* original/* bin/ wasm_bin/*
