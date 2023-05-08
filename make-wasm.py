@@ -30,7 +30,7 @@ def clean(path):
 
 def generate(path, output_dir):
     shutil.copy(root_dir + "/CMakeLists.txt", path)
-    # retcode = subprocess.Popen(["cmake", "-DOUTPUT_DIR:STRING=" + output_dir, "."], cwd=path).wait()
+    # Invoke build via emcc to output Wasm and JS files for each test case.
     retcode = subprocess.Popen(["emcmake", "cmake", "-DOUTPUT_DIR:STRING=" + output_dir, "."], cwd=path).wait()
     if retcode != 0:
         juliet_print("error generating " + path + " - stopping")
