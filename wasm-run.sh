@@ -45,6 +45,9 @@ run_tests()
 
   echo "========== STARTING TEST ${TYPE_PATH} $(date) ==========" >> "${TYPE_PATH}.run"
   for TESTCASE in $(ls -1 "${TYPE_PATH}"); do
+    echo "[+] TESTCASE: $TESTCASE"
+    echo ""
+    
     local TESTCASE_PATH="${TYPE_PATH}/${TESTCASE}"
 
     if [ ! -z "${PRELOAD_PATH}" ]

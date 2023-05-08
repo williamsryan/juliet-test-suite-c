@@ -55,6 +55,7 @@ if __name__ == "__main__":
     parser.add_argument("-m", "--make", action="store_true", help="use make to build test cases for the targeted CWES")
     parser.add_argument("-r", "--run", action="store_true", help="run tests for the targeted CWEs")
     parser.add_argument("-o", "--output-dir", action="store", default="wasm_bin", help="specify the output directory relative to the directory containing this script (default: wasm_bin)")
+    parser.add_argument("-t", "--run-timeout", action="store", default=".01", type=float, help="specify the default test run timeout in seconds (type: float, default: .01)")
     args = parser.parse_args()
 
     args.CWEs = set(args.CWEs)
