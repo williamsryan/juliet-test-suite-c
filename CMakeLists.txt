@@ -8,14 +8,14 @@ project("juliet-c-${CWE_NAME}")
 
 message(STATUS "Setting compilation target to WASM")
 
-# add_definitions(-std=c++11 -O3)
-
 # prevent cmake from setting -O2 (for release, relwithdebinf, minsizerel, etc)
-set(CMAKE_C_FLAGS_RELWITHDEBINFO "-g")
-set(CMAKE_C_FLAGS_RELEASE "-g")
-set(CMAKE_C_FLAGS_MINSIZEREL "-g")
-add_compile_options(-Os)  # hopefully adding -O0 here should turn off test optimizations
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "-g -O0")
+set(CMAKE_C_FLAGS_RELEASE "-g -O0")
+set(CMAKE_C_FLAGS_MINSIZEREL "-g -O0")
 
+message(STATUS "Set CFLAGS: ${CMAKE_C_FLAGS_RELEASE}")
+
+add_compile_options(-O0 -Wall)
 
 option(PLACE_OUTPUT_IN_TOPLEVEL_DIR "Use TOPLEVEL_DIR/bin as the output for all test binaries" ON)
 set(TOPLEVEL_DIR "${CMAKE_SOURCE_DIR}/../..")
