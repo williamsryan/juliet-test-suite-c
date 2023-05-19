@@ -9,13 +9,13 @@ project("juliet-c-${CWE_NAME}")
 message(STATUS "Setting compilation target to WASM")
 
 # prevent cmake from setting -O2 (for release, relwithdebinf, minsizerel, etc)
-set(CMAKE_C_FLAGS_RELWITHDEBINFO "-g -O0")
-set(CMAKE_C_FLAGS_RELEASE "-g -O0")
-set(CMAKE_C_FLAGS_MINSIZEREL "-g -O0")
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "-g4 -O0")
+set(CMAKE_C_FLAGS_RELEASE "-g4 -O0")
+set(CMAKE_C_FLAGS_MINSIZEREL "-g4 -O0")
 
 message(STATUS "Set CFLAGS: ${CMAKE_C_FLAGS_RELEASE}")
 
-add_compile_options(-O0 -Wall)
+add_compile_options(-g4 -Wall -s LINKABLE=1 -s EXPORT_ALL=1) # Test the EXPORT_ALL=1 later (export all functions to JS).
 
 option(PLACE_OUTPUT_IN_TOPLEVEL_DIR "Use TOPLEVEL_DIR/bin as the output for all test binaries" ON)
 set(TOPLEVEL_DIR "${CMAKE_SOURCE_DIR}/../..")
