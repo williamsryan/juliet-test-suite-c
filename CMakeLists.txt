@@ -15,7 +15,8 @@ set(CMAKE_C_FLAGS_MINSIZEREL "-g4 -O0")
 
 message(STATUS "Set CFLAGS: ${CMAKE_C_FLAGS_RELEASE}")
 
-add_compile_options(-g4 -Wall -s LINKABLE=1 -s EXPORT_ALL=1) # Test the EXPORT_ALL=1 later (export all functions to JS).
+#add_compile_options(-g4 -Wall -s LINKABLE=1 -s EXPORT_ALL=1) # Test the EXPORT_ALL=1 later (export all functions to JS).
+add_compile_options(-g -Wall)
 
 option(PLACE_OUTPUT_IN_TOPLEVEL_DIR "Use TOPLEVEL_DIR/bin as the output for all test binaries" ON)
 set(TOPLEVEL_DIR "${CMAKE_SOURCE_DIR}/../..")
