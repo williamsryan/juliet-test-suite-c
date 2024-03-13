@@ -2,4 +2,5 @@
 wasm_bin
 *.o
 *.log
+target
 
