@@ -1,0 +1,9 @@
+[package]
+name = "eval_runner"
+version = "0.1.0"
+authors = ["Ryan Williams <williams.ry@northeastern.edu>"]
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+clap = { version = "4.2.7", features = ["derive"] }
