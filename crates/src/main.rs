@@ -75,5 +75,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     writeln!(log_file, "\n==================== Statistics ====================")?;
     writeln!(log_file, "Total: {}. Failed: {}", total, failed)?;
 
+    println!("\n==================== Statistics ====================");
+    println!("Total: {}. Failed: {}", total, failed);
+
     Ok(())
 }
