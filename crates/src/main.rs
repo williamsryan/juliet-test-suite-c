@@ -69,10 +69,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             failed += 1;
         }
         let filename = Path::new(&path_str).file_name().unwrap().to_str().unwrap();
-        writeln!(log_file, "{} took {:?}. Success: {}", filename, duration, success)?;
+        writeln!(
+            log_file,
+            "{} took {:?}. Success: {}",
+            filename, duration, success
+        )?;
     }
 
-    writeln!(log_file, "\n==================== Statistics ====================")?;
+    writeln!(
+        log_file,
+        "\n==================== Statistics ===================="
+    )?;
     writeln!(log_file, "Total: {}. Failed: {}", total, failed)?;
 
     println!("\n==================== Statistics ====================");

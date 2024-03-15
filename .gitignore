@@ -3,4 +3,7 @@ wasm_bin
 *.o
 *.log
 target
-
+*.txt
+*.cmake
+CMakeFiles/
+testcases/*/Makefile
