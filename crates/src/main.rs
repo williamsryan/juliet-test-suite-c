@@ -52,7 +52,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let new_js_path = filtered_dir.join(Path::new(&path_str).file_name().unwrap());
                 let new_wasm_path = filtered_dir.join(wasm_path.file_name().unwrap());
                 fs::copy(&path_str, &new_js_path).expect("Failed to copy JS file");
-                fs::copy(&wasm_path, &new_wasm_path).expect("Failed to copy WASM file");
+                fs::copy(&wasm_path, &new_wasm_path).expect("Failed to copy Wasm file");
                 (path_str, duration, true)
             } else {
                 eprintln!("Error running {}: {:?}", path_str, output);
