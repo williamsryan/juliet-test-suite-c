@@ -47,7 +47,7 @@ def insert_mem_dump(output_dir):
     console.log("Number of non-zero elements in memory:", nonZeroCount);
 
     const result = JSON.stringify(memoryData);
-    fs.writeFileSync(`./{jsFileName}.json`, result);
+    fs.writeFileSync(`./run-stats/{jsFileName}.json`, result);
     """
                         js_code = js_code[:opening_brace_pos] + instrumentation_code + js_code[opening_brace_pos:]
                         with open(os.path.join(root, file), 'w') as js_file:
