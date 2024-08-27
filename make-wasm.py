@@ -13,9 +13,45 @@ import os
 
 root_dir = str(pathlib.Path(__file__).parent)
 
-
 def juliet_print(string):
     print("========== " + string + " ==========")
+
+def insert_mem_dump(output_dir):
+    for root, dirs, files in os.walk(output_dir):
+        for file in files:
+            if file.endswith(".js"):
+                with open(os.path.join(root, file), 'r') as js_file:
+                    js_code = js_file.read()
+                    post_run_pos = js_code.find("postRun()")
+                    if post_run_pos != -1:
+                        # Find the position of the opening brace of the postRun function
+                        opening_brace_pos = js_code.find("{", post_run_pos) + 1
+
+                        # Insert the instrumentation code after the opening brace
+                        instrumentation_code = """
+    // Instrumentation code
+    let nonZeroCount = 0;
+    const loads = [];
+    const memoryData = {};
+    let wasmMemory = wasmExports['memory'].buffer;
+
+    for (let i = 0; i < wasmMemory.length; i++) {
+        if (wasmMemory[i] !== 0) {
+            // console.log(i);
+            nonZeroCount++;
+            loads.push(i);
+            memoryData[i] = wasmMemory[i];
+        }
+    }
+    console.log("Number of non-zero elements in memory:", nonZeroCount);
+
+    const result = JSON.stringify(memoryData);
+    const jsFileName = file.split('/').pop().replace('.js', '');
+    fs.writeFileSync(`./${jsFileName}.json`, result);
+    """
+                        js_code = js_code[:opening_brace_pos] + instrumentation_code + js_code[opening_brace_pos:]
+                        with open(os.path.join(root, file), 'w') as js_file:
+                            js_file.write(js_code)
 
 def clean(path):
     try:
@@ -27,7 +63,6 @@ def clean(path):
     except OSError:
         pass
 
-
 def generate(path, output_dir):
     shutil.copy(root_dir + "/CMakeLists.txt", path)
     # Invoke build via emcc to output Wasm and JS files for each test case.
@@ -36,13 +71,11 @@ def generate(path, output_dir):
         juliet_print("error generating " + path + " - stopping")
         exit()
 
-
 def make(path):
-    retcode = subprocess.Popen(["make", "-j16"], cwd=path).wait()
+    retcode = subprocess.Popen(["make", "-j6"], cwd=path).wait()
     if retcode != 0:
         juliet_print("error making " + path + " - stopping")
         exit()
-
 
 def run(CWE, output_dir, timeout):
     subprocess.Popen([root_dir + "/" + output_dir + "/wasm-run.sh", str(CWE), timeout]).wait()
@@ -51,6 +84,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="build and run Juliet test cases for targeted CWEs")
     parser.add_argument("CWEs", metavar="N", type=int, nargs="*", help="a CWE number to target")
     parser.add_argument("-c", "--clean", action="store_true", help="clean all CMake and make files for the targeted CWEs")
+    parser.add_argument("-i", "--instrument", action="store_true", help="instrument the generated JS glue code with memory information")
     parser.add_argument("-g", "--generate", action="store_true", help="use CMake to generate Makefiles for the targeted CWEs")
     parser.add_argument("-m", "--make", action="store_true", help="use make to build test cases for the targeted CWES")
     parser.add_argument("-r", "--run", action="store_true", help="run tests for the targeted CWEs")
@@ -89,6 +123,9 @@ if __name__ == "__main__":
                 if args.make:
                     juliet_print("making " + path)
                     make(path)
+                if args.instrument:
+                    # The following is for instrumenting the JS glue code
+                    insert_mem_dump(args.output_dir)
                 if args.run:
                     juliet_print("running " + path)
                     run(parsed_CWE, args.output_dir, str(args.run_timeout) + "s")
