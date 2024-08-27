@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 
-# TODO: adapt juliet.py to output Wasm files
-# for each of the CWE binaries.
-
 import argparse
 import pathlib
 import subprocess
