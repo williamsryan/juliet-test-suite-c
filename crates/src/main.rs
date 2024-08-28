@@ -5,8 +5,8 @@ use std::path::Path;
 use std::time::Instant;
 use tokio::process::Command;
 
-use tokio::sync::Semaphore;
-use std::sync::Arc;
+// use tokio::sync::Semaphore;
+// use std::sync::Arc;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -36,7 +36,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut failed = 0;
 
     // Set the limit for the number of concurrent tasks
-    let semaphore = Arc::new(Semaphore::new(4096));
+    // let semaphore = Arc::new(Semaphore::new(4096));
 
     let output_dir = Path::new("run-stats");
     if let Err(e) = fs::create_dir_all(&output_dir) {
@@ -48,10 +48,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let path = path.path();
         let path_str = path.to_str().unwrap().to_owned();
         // let wasm_path = path.with_extension("wasm");
-        let semaphore = Arc::clone(&semaphore);
+        // let semaphore = Arc::clone(&semaphore);
 
         let handle = tokio::spawn(async move {
-            let permit = semaphore.acquire().await.unwrap();
+            // let permit = semaphore.acquire().await.unwrap();
             let start = Instant::now();
             let output = Command::new("node")
                 .arg(&path_str)
@@ -60,7 +60,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .expect("Failed to execute command");
 
             // Release the permit when the task is done
-            drop(permit);
+            // drop(permit);
 
             let duration = start.elapsed();
 
