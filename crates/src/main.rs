@@ -30,13 +30,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .collect();
 
     let mut handles = vec![];
-    let mut log_file = File::create("run-stats.log")?;
+    let mut log_file = File::create("node-out.log")?;
 
     let mut total = 0;
     let mut failed = 0;
 
     // Set the limit for the number of concurrent tasks
-    let semaphore = Arc::new(Semaphore::new(100));
+    let semaphore = Arc::new(Semaphore::new(4096));
 
     let output_dir = Path::new("run-stats");
     if let Err(e) = fs::create_dir_all(&output_dir) {
