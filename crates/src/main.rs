@@ -4,6 +4,7 @@ use std::io::Write;
 use std::path::Path;
 use std::time::Instant;
 use tokio::process::Command;
+use futures::future::join_all;
 
 // use tokio::sync::Semaphore;
 // use std::sync::Arc;
@@ -56,48 +57,57 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let output = Command::new("node")
                 .arg(&path_str)
                 .output()
-                .await
-                .expect("Failed to execute command");
+                .await;
 
             // Release the permit when the task is done
             // drop(permit);
 
             let duration = start.elapsed();
 
-            if output.status.success() {
-                println!(
-                    "{} took {:?}. Success: {}",
-                    path_str,
-                    duration,
-                    output.status.success()
-                );
-                // let filtered_dir = Path::new("filtered");
-                // fs::create_dir_all(&filtered_dir).expect("Failed to create directory");
-                // let new_js_path = filtered_dir.join(Path::new(&path_str).file_name().unwrap());
-                // let new_wasm_path = filtered_dir.join(wasm_path.file_name().unwrap());
-                // fs::copy(&path_str, &new_js_path).expect("Failed to copy JS file");
-                // fs::copy(&wasm_path, &new_wasm_path).expect("Failed to copy Wasm file");
-                (path_str, duration, true)
-            } else {
-                eprintln!("Error running {}: {:?}", path_str, output);
-                (path_str, duration, false)
+            match output {
+                Ok(output) if output.status.success() => {
+                    println!(
+                        "{} took {:?}. Success: {}",
+                        path_str,
+                        duration,
+                        output.status.success()
+                    );
+                    Ok((path_str, duration, true))
+                }
+                Ok(output) => {
+                    eprintln!("Error running {}: {:?}", path_str, output);
+                    Ok((path_str, duration, false))
+                }
+                Err(e) => {
+                    eprintln!("Failed to execute command for {}: {:?}", path_str, e);
+                    Err(e)
+                }
             }
         });
 
         handles.push(handle);
     }
 
-    for handle in handles {
-        let (path_str, duration, success) = handle.await?;
-        if !success {
-            failed += 1;
+    let results = join_all(handles).await;
+
+    for result in results {
+        match result {
+            Ok(Ok((path_str, duration, success))) => {
+                if success {
+                    println!("{} completed successfully in {:?}", path_str, duration);
+                } else {
+                    failed += 1;
+                }
+            }
+            Ok(Err(e)) => {
+                eprintln!("Task failed with error: {:?}", e);
+                failed += 1;
+            }
+            Err(e) => {
+                eprintln!("Join error: {:?}", e);
+                failed += 1;
+            }
         }
-        let filename = Path::new(&path_str).file_name().unwrap().to_str().unwrap();
-        writeln!(
-            log_file,
-            "{} took {:?}. Success: {}",
-            filename, duration, success
-        )?;
     }
 
     writeln!(
