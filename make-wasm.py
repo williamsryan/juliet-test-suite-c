@@ -73,6 +73,18 @@ def make(path):
     if retcode != 0:
         juliet_print("error making " + path + " - stopping")
         exit()
+    # check_js_files(path)
+
+def check_js_files(path):
+    js_files = [f for f in os.listdir(path) if f.endswith('.js')]
+    for js_file in js_files:
+        js_path = os.path.join(path, js_file)
+        retcode = subprocess.Popen(["node", js_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE).wait()
+        if retcode != 0:
+            wasm_file = js_file.replace('.js', '.wasm')
+            os.remove(js_path)
+            os.remove(os.path.join(path, wasm_file))
+            juliet_print(f"Removed {js_file} and {wasm_file} due to errors")
 
 def run(CWE, output_dir, timeout):
     subprocess.Popen([root_dir + "/" + output_dir + "/wasm-run.sh", str(CWE), timeout]).wait()
