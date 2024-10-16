@@ -74,6 +74,7 @@ def make(path):
         juliet_print("error making " + path + " - stopping")
         exit()
     # check_js_files(path)
+    _ = subprocess.Popen(["npm", "install", "ws"], cwd=path).wait()
 
 def check_js_files(path):
     js_files = [f for f in os.listdir(path) if f.endswith('.js')]
