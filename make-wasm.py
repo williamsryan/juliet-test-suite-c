@@ -43,12 +43,12 @@ def compile_with_sanitizers(path):
         juliet_print("error making " + path + " - stopping")
         exit()
 
-def run_test_case(binary_file, log_file):
+def run_test_case(js_file, log_file):
     """
-    Executes the binary and captures its output in a log file.
+    Executes the JavaScript file in Node and captures its output in a log file.
     """
     with open(log_file, "w") as log:
-        result = subprocess.run([f"./{binary_file}"], stdout=log, stderr=log)
+        result = subprocess.run(["node", js_file], stdout=log, stderr=log)
         return result.returncode
     
 def find_control_flow_violations(log_directory):
@@ -76,17 +76,16 @@ def process_test_cases(source_directory, log_directory, output_directory):
         match = re.search("^CWE(\d+)", subdir)
         if match:
             path = os.path.join(source_directory, subdir)
-            # juliet_print("Compiling with sanitizers for " + path)
-            # compile_with_sanitizers(path)
+            juliet_print("Running test cases in " + path)
 
-            # Run each compiled binary and log output
-            for root, dirs, files in os.walk(path):
+            # Find all JavaScript files in the output directory that correspond to each CWE
+            for root, dirs, files in os.walk(os.path.join(output_directory, subdir)):
                 for file in files:
-                    if file.endswith("-bad"):
-                        binary_file = os.path.join(root, file)
+                    if file.endswith(".js") and "-bad" in file:  # Ensure we only run "bad" cases
+                        js_file = os.path.join(root, file)
                         log_file = os.path.join(log_directory, f"{file}.log")
-                        juliet_print(f"Running {binary_file} and capturing output in {log_file}")
-                        run_test_case(binary_file, log_file)
+                        juliet_print(f"Running {js_file} and capturing output in {log_file}")
+                        run_test_case(js_file, log_file)
 
     print("Filtering logs for control flow and data corruption violations...")
     applicable_cases = find_control_flow_violations(log_directory)
