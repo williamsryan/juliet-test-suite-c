@@ -6,7 +6,7 @@ string(REGEX MATCH "^CWE[0-9]+" CWE_NAME "${CWE_FOLDER}")
 
 project("juliet-c-${CWE_NAME}")
 
-message(STATUS "Setting compilation target to WASM")
+message(STATUS "Setting compilation target to Wasm")
 
 # prevent cmake from setting -O2 (for release, relwithdebinf, minsizerel, etc)
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "-g4 -O0")
@@ -17,6 +17,23 @@ message(STATUS "Set CFLAGS: ${CMAKE_C_FLAGS_RELEASE}")
 
 #add_compile_options(-g4 -Wall -s LINKABLE=1 -s EXPORT_ALL=1) # Test the EXPORT_ALL=1 later (export all functions to JS).
 add_compile_options(-g -Wall)
+
+# Enable sanitizers based on an option
+option(ENABLE_SANITIZERS "Enable AddressSanitizer and Undefined Behavior Sanitizer" OFF)
+
+if(ENABLE_SANITIZERS)
+    message(STATUS "Sanitizers enabled")
+    add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=address,undefined)
+    
+    # Enable CFI only if building with C++ and enable Link Time Optimization (LTO)
+    # if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    #     add_compile_options(-fsanitize=cfi -flto)
+    #     add_link_options(-fsanitize=cfi -flto)
+    # endif()
+else()
+    message(STATUS "Sanitizers disabled")
+endif()
 
 option(PLACE_OUTPUT_IN_TOPLEVEL_DIR "Use TOPLEVEL_DIR/bin as the output for all test binaries" ON)
 set(TOPLEVEL_DIR "${CMAKE_SOURCE_DIR}/../..")
