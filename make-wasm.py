@@ -49,6 +49,8 @@ def run_test_case(js_file, log_file):
     """
     with open(log_file, "w") as log:
         result = subprocess.run(["node", js_file], stdout=log, stderr=log)
+        if result.returncode != 0:
+            print(f"Error running {js_file}. Check {log_file} for details.")
         return result.returncode
     
 def find_control_flow_violations(log_directory):
@@ -66,30 +68,36 @@ def find_control_flow_violations(log_directory):
                 applicable_cases.append(log_file.replace(".log", ""))
     return applicable_cases
 
-def process_test_cases(source_directory, log_directory, output_directory):
+def process_test_cases(source_directory, log_directory, output_directory, target_cwes):
+    """
+    Compiles, runs, logs, and filters applicable cases only for the specified CWE directories.
+    """
     if not os.path.exists(log_directory):
         os.makedirs(log_directory)
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
+    # Only process the specified CWE directories
     for subdir in os.listdir(source_directory):
         match = re.search("^CWE(\d+)", subdir)
         if match:
-            path = os.path.join(source_directory, subdir)
-            juliet_print("Running test cases in " + path)
+            parsed_CWE = int(match.group(1))
+            if parsed_CWE in target_cwes:
+                path = os.path.join(source_directory, subdir)
+                juliet_print("Running test cases in " + path)
 
-            # Find all JavaScript files in the output directory that correspond to each CWE
-            for root, dirs, files in os.walk(os.path.join(output_directory, subdir)):
-                for file in files:
-                    if file.endswith(".js") and "-bad" in file:  # Ensure we only run "bad" cases
-                        js_file = os.path.join(root, file)
-                        log_file = os.path.join(log_directory, f"{file}.log")
-                        juliet_print(f"Running {js_file} and capturing output in {log_file}")
-                        run_test_case(js_file, log_file)
+                # Find and run only the JavaScript files corresponding to the CWE
+                for root, dirs, files in os.walk(os.path.join(output_directory, subdir)):
+                    for file in files:
+                        if file.endswith(".js") and "-bad" in file:  # Ensure we only run "bad" cases
+                            js_file = os.path.join(root, file)
+                            log_file = os.path.join(log_directory, f"{file}.log")
+                            juliet_print(f"Running {js_file} and capturing output in {log_file}")
+                            run_test_case(js_file, log_file)
 
-    print("Filtering logs for control flow and data corruption violations...")
+    # print("Filtering logs for control flow and data corruption violations...")
     applicable_cases = find_control_flow_violations(log_directory)
-    print("Test cases with potential control flow or data corruption:", applicable_cases)
+    # print("Test cases with potential control flow or data corruption:", applicable_cases)
     return applicable_cases
 
 def make(path):
@@ -111,10 +119,10 @@ if __name__ == "__main__":
     parser.add_argument("-r", "--run", action="store_true", help="Run tests for the targeted CWEs")
     parser.add_argument("-s", "--sanitizers", action="store_true", help="enable sanitizers for AddressSanitizer, and UBSan")
     parser.add_argument("-o", "--output-dir", action="store", default="wasm_bin", help="specify the output directory")
-    
+    parser.add_argument("-l", "--log-dir", default="asan_logs", help="Specify the log directory")
     args = parser.parse_args()
+    
     args.CWEs = set(args.CWEs)
-
     testcases = os.path.join(root_dir, "testcases")
 
     if not os.path.exists(testcases):
@@ -143,7 +151,7 @@ if __name__ == "__main__":
 
     # Only call process_test_cases if --run was specified
     if args.run:
-        applicable_cases = process_test_cases(testcases, args.log_dir, args.output_dir)
+        applicable_cases = process_test_cases(testcases, args.log_dir, args.output_dir, args.CWEs)
         print("Applicable cases:", applicable_cases)
 
     sys.exit(0)
