@@ -76,8 +76,8 @@ def process_test_cases(source_directory, log_directory, output_directory):
         match = re.search("^CWE(\d+)", subdir)
         if match:
             path = os.path.join(source_directory, subdir)
-            juliet_print("Compiling with sanitizers for " + path)
-            compile_with_sanitizers(path)
+            # juliet_print("Compiling with sanitizers for " + path)
+            # compile_with_sanitizers(path)
 
             # Run each compiled binary and log output
             for root, dirs, files in os.walk(path):
