@@ -55,6 +55,8 @@ int globalReturnsTrueOrFalse();
 extern int globalArgc;
 extern char** globalArgv;
 
+extern int __data_end;
+
 #ifdef __cplusplus
 }
 #endif

@@ -108,7 +108,7 @@ foreach(SOURCE_FILE ${SOURCE_FILES})
       )
       # Add linker flags for the 'good' target
       set_target_properties("${EXECUTABLE_NAME}-good"
-        APPEND_STRING PROPERTY LINK_FLAGS " -sEXPORTED_FUNCTIONS=['_main','_emscripten_stack_get_base','_emscripten_stack_get_end'] -sEXPORTED_RUNTIME_METHODS=['ccall','cwrap']"
+        APPEND_STRING PROPERTY LINK_FLAGS " -sEXPORTED_FUNCTIONS=['_main','_emscripten_stack_get_base','_emscripten_stack_get_end', '_get_data_end'] -sEXPORTED_RUNTIME_METHODS=['ccall','cwrap']"
       )
 
       # add bad executable
@@ -120,7 +120,7 @@ foreach(SOURCE_FILE ${SOURCE_FILES})
       )
       # Add linker flags for the 'bad' target
       set_target_properties("${EXECUTABLE_NAME}-bad"
-        APPEND_STRING PROPERTY LINK_FLAGS " -sEXPORTED_FUNCTIONS=['_main','_emscripten_stack_get_base','_emscripten_stack_get_end'] -sEXPORTED_RUNTIME_METHODS=['ccall','cwrap']"
+        APPEND_STRING PROPERTY LINK_FLAGS " -sEXPORTED_FUNCTIONS=['_main','_emscripten_stack_get_base','_emscripten_stack_get_end', '_get_data_end'] -sEXPORTED_RUNTIME_METHODS=['ccall','cwrap']"
       )
 
     # otherwise we can build both executables with all files corresponding to the
