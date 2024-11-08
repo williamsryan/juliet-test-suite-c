@@ -3,11 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <wctype.h>
+#include <emscripten/emscripten.h>
 
 #ifndef _WIN32
 #include <wchar.h>
 #endif
 
+EMSCRIPTEN_KEEPALIVE
 int get_data_end() { return (int)(intptr_t)&__data_end; }
 
 void printLine(const char *line) {

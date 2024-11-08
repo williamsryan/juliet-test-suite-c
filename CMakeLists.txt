@@ -15,6 +15,10 @@ set(CMAKE_C_FLAGS_MINSIZEREL "-g4 -O0")
 
 message(STATUS "Set CFLAGS: ${CMAKE_C_FLAGS_RELEASE}")
 
+# Define the functions and runtime methods to export
+set(EXPORTED_FUNCTIONS "'_main','_emscripten_stack_get_base','_emscripten_stack_get_end','_get_data_end'")
+set(EXPORTED_RUNTIME_METHODS "'ccall','cwrap','getValue','setValue'")
+
 #add_compile_options(-g4 -Wall -s LINKABLE=1 -s EXPORT_ALL=1) # Test the EXPORT_ALL=1 later (export all functions to JS).
 add_compile_options(-g -Wall)
 
