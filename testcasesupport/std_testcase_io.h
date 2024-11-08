@@ -55,6 +55,7 @@ int globalReturnsTrueOrFalse();
 extern int globalArgc;
 extern char** globalArgv;
 
+extern int __global_base;  // [__global_base -> __data_end] is all your static data (normal data and bss combined).
 extern int __data_end;
 
 #ifdef __cplusplus

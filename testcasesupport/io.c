@@ -12,6 +12,9 @@
 EMSCRIPTEN_KEEPALIVE
 int get_data_end() { return (int)(intptr_t)&__data_end; }
 
+EMSCRIPTEN_KEEPALIVE
+int get_global_base() { return (int)(intptr_t)&__global_base; }
+
 void printLine(const char *line) {
   if (line != NULL) {
     printf("%s\n", line);
