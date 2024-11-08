@@ -106,6 +106,10 @@ foreach(SOURCE_FILE ${SOURCE_FILES})
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/good"
         COMPILE_DEFINITIONS OMITBAD
       )
+      # Add linker flags for the 'good' target
+      set_target_properties("${EXECUTABLE_NAME}-good"
+        APPEND_STRING PROPERTY LINK_FLAGS " -sEXPORTED_FUNCTIONS=['_main','_emscripten_stack_get_base','_emscripten_stack_get_end'] -sEXPORTED_RUNTIME_METHODS=['ccall','cwrap']"
+      )
 
       # add bad executable
       add_executable("${EXECUTABLE_NAME}-bad" "${SOURCE_DIRECTORY}/${EXECUTABLE_NAME}_bad.cpp")
@@ -113,6 +117,10 @@ foreach(SOURCE_FILE ${SOURCE_FILES})
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bad"
         COMPILE_DEFINITIONS OMITGOOD
+      )
+      # Add linker flags for the 'bad' target
+      set_target_properties("${EXECUTABLE_NAME}-bad"
+        APPEND_STRING PROPERTY LINK_FLAGS " -sEXPORTED_FUNCTIONS=['_main','_emscripten_stack_get_base','_emscripten_stack_get_end'] -sEXPORTED_RUNTIME_METHODS=['ccall','cwrap']"
       )
 
     # otherwise we can build both executables with all files corresponding to the
